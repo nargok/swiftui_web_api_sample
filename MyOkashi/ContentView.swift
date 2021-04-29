@@ -10,15 +10,28 @@ import SwiftUI
 struct ContentView: View {
     
     @ObservedObject var okashiDataList = OkashiData()
-    
     @State var inputText = ""
-    
     
     var body: some View {
         
-        TextField("キーワードを入力してください", text: $inputText, onCommit: {
-            okashiDataList.searchOkashi(keyword: inputText)
-        })        
+        VStack {
+            TextField("キーワードを入力してください", text: $inputText, onCommit: {
+                okashiDataList.searchOkashi(keyword: inputText)
+            })
+            .padding()
+            
+            List(okashiDataList.okashiList) {
+                okashi in
+                
+                HStack {
+                    Image(uiImage: okashi.image)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(height: 40)
+                    Text(okashi.name)
+                }
+            }
+        }
     }
 }
 
