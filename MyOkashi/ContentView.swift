@@ -8,9 +8,17 @@
 import SwiftUI
 
 struct ContentView: View {
+    
+    @ObservedObject var okashiDataList = OkashiData()
+    
+    @State var inputText = ""
+    
+    
     var body: some View {
-        Text("Hello, world!")
-            .padding()
+        
+        TextField("キーワードを入力してください", text: $inputText, onCommit: {
+            okashiDataList.searchOkashi(keyword: inputText)
+        })        
     }
 }
 
