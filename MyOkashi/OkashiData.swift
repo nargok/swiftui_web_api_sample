@@ -6,6 +6,14 @@
 //
 
 import Foundation
+import UIKit
+
+struct OkashiItem: Identifiable {
+    let id = UUID()
+    let name: String
+    let link: URL
+    let image: UIImage
+}
 
 class OkashiData: ObservableObject {
     
@@ -17,6 +25,9 @@ class OkashiData: ObservableObject {
         }
         let item: [Item]?
     }
+    
+    // @Publishedをつけるとプロパティを監視して自動通知できる
+    @Published var okashiList: [OkashiItem] = []
     
     func searchOkashi(keyword: String) {
         print(keyword)
@@ -48,7 +59,25 @@ class OkashiData: ObservableObject {
                 let decoder = JSONDecoder()
                 let json = try decoder.decode(ResultJson.self, from: data!)
                 
-                print(json)
+//                print(json)
+                
+                if let items = json.item {
+                    
+                    self.okashiList.removeAll()
+                    
+                    for item in items {
+                        if let name = item.name ,
+                           let link = item.url ,
+                           let imageUrl = item.image ,
+                           let imageData = try? Data(contentsOf: imageUrl) ,
+                           let image = UIImage(data: imageData)?.withRenderingMode(.alwaysOriginal) {
+                            let okashi = OkashiItem(name: name, link: link, image: image)
+                            self.okashiList.append(okashi)
+                        }
+                    }
+                    
+                    print(self.okashiList)
+                }
             } catch {
                 print("API error!")
             }
